@@ -6,6 +6,16 @@ build:
 load:
 	openFPGALoader -b tangnano20k pack.fs
 
+sim:
+	iverilog main.v -g2012
 
 clean:
-	rm -f *.json *.fs *-unpacked.v
+	rm -f *.json *.fs *-unpacked.v abc.history
+
+define test_module
+	iverilog -g2012 -s $(1)_tb ./testbench/$(1)_tb.v ./modules/$(1).v -o./testbench/$(1)_tb.vvp
+	vvp ./testbench/$(1)_tb.vvp -o ./testbench/$(1).vcd
+endef
+
+test:
+	$(call test_module,rs232)
