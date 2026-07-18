@@ -5,21 +5,38 @@ module main #(
 ) (
   input clk_i,
   input key_i,
-  output [LEDS_NR-1:0] led_o
+  input rst_i,
+  input  RXD_i,
+  output TXD_o,
+  output [5:0] led_o
 );
 
-logic key = key_i;
+localparam integer unsigned CLOCK_FREQ = 27_000_000;
+localparam integer unsigned BAUD_RATE = 115200;
 
-logic [25:0] ctr_q;
-logic [25:0] ctr_d;
+logic rx_i;
+logic tx_o;
 
-always_ff @(posedge clk_i) begin
-  if (key) begin
-    ctr_q <= ctr_d;
-  end
-end
+logic [7:0]data_i;
+logic send_str_i;
 
-assign ctr_d = ctr_q + 1'b1;
-assign led = {ctr_q[25:25-(LEDS_NR - 2)], |ctr_q[25-(LEDS_NR - 1):25-(LEDS_NR)]};
+logic [7:0]data_o;
+logic recv_str_o;
+
+logic recv_busy_o;
+logic send_busy_o;
+
+assign rx_i = RXD_i;
+assign TXD_o = tx_o;
+
+assign data_i = data_o;
+assign send_str_i = recv_str_o;
+
+assign led_o[5:0] = ~data_o[5:0];
+
+rs232 #(
+  .CLOCK_FREQ(CLOCK_FREQ),
+  .BAUD_RATE(BAUD_RATE)
+) rs232_inst (.*);
 
 endmodule

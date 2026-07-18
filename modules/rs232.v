@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module rs232 #(
-  parameter integer unsigned CLOCK_FREQ,
+  parameter integer unsigned CLOCK_FREQ = 27_000_000,
   parameter integer unsigned BAUD_RATE = 115200
 ) (
   input logic clk_i,
@@ -103,7 +103,6 @@ always_ff @(posedge clk_i or posedge rst_i) begin
     bauds_recv <= 0;
     recv_cycles <= 0;
     data_o <= 0;
-    tx_o <= 1;
   end else begin
     // potentialy metastable to stable
     rx_f <= rx_i;
@@ -138,5 +137,5 @@ always_ff @(posedge clk_i or posedge rst_i) begin
   end
 end
 
-endmodule;
+endmodule
 
